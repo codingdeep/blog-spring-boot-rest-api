@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="user")
@@ -23,5 +25,8 @@ public class User {
     private String email;
     private String password;
     private String about;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "user")
+    private List<Post> posts = new ArrayList<>();
 
 }
