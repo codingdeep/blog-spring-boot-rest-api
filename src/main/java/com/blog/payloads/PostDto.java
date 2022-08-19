@@ -7,12 +7,15 @@ import lombok.Setter;
 
 import java.util.Date;
 
+import com.blog.models.Category;
+
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class PostDto {
-
+    private Long postId;
     private String title;
     private String description;
     private String postImage="default.jpg";

@@ -1,5 +1,6 @@
 package com.blog.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ public class Category {
     private String categoryDescription;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "category")
+    @JsonIgnore
     private List<Post> posts = new ArrayList<>();
 
 }

@@ -1,19 +1,14 @@
 package com.blog.controllers;
 
 
+import com.blog.models.Post;
 import com.blog.payloads.CategoryDto;
 import com.blog.payloads.PostDto;
 import com.blog.services.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -32,31 +27,45 @@ public class PostController {
     }
 
     //update post by id
-    @PutMapping("/{postId}")
-    public ResponseEntity<PostDto> updatePost(@PathVariable("postId") Long postId){
-        return  null;
+    @PutMapping("/postId={postId}&categoryId={categoryId}&userId={userId}")
+    public ResponseEntity<PostDto> updatePost(
+            @RequestBody() PostDto postDto,
+            @PathVariable("postId") Long postId,
+            @PathVariable("categoryId") Long categoryId,
+            @PathVariable("userId") Long userId
+    ){
+       PostDto postDto1 = this.postService.updatePost(postDto,postId,categoryId,userId);
+       return  new ResponseEntity<>(postDto1,HttpStatus.OK);
     }
 
     @DeleteMapping("/{postId}")
     public void deletePost(@PathVariable("postId") Long postId){
-        //
+        this.postService.deletePost(postId);
     }
     @GetMapping("")
-    public ResponseEntity<List<PostDto>> getAllPost(){
-        return null;
+    public ResponseEntity<List<PostDto>> getAllPost(
+            @RequestParam(value = "pageNumber",defaultValue = "1",required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "10",required = false) Integer pageSize
+            ){
+        List<PostDto> postDtos = this.postService.getAllPost(pageNumber,pageSize);
+        return new ResponseEntity<>(postDtos,HttpStatus.OK);
     }
 
-    @GetMapping("/{categoryId}")
+    @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<PostDto>> getPostByCategoryId(@PathVariable("categoryId") Long categoryId){
-        return null;
+        List<PostDto> postDtos = this.postService.getPostByCategoryId(categoryId);
+        return new ResponseEntity<>(postDtos,HttpStatus.OK);
     }
-    @GetMapping("/{postId}")
+    @GetMapping("/postId={postId}")
     public ResponseEntity<PostDto> getByPostId(@PathVariable("postId") Long postId){
-        return null;
+        PostDto postDto = this.postService.getByPostId(postId);
+        return new ResponseEntity<>(postDto,HttpStatus.OK);
     }
-    @GetMapping("/{userId}")
+
+    @GetMapping("/userId={userId}")
     public ResponseEntity<List<PostDto>> getByUserId(@PathVariable("userId") Long userId){
-        return null;
+        List<PostDto> postDtos = this.postService.getByUserId(userId);
+        return new ResponseEntity<>(postDtos,HttpStatus.OK);
     }
 
 
