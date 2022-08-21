@@ -4,6 +4,7 @@ import com.blog.exceptions.ResourceNotFoundException;
 import com.blog.models.Category;
 import com.blog.models.Post;
 import com.blog.payloads.CategoryDto;
+import com.blog.payloads.PostApiResponse;
 import com.blog.payloads.PostDto;
 import com.blog.repositories.CategoryRepository;
 import com.blog.repositories.PostRepository;
@@ -13,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -73,20 +75,52 @@ public class PostServiceImplementation implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize) {
-        Pageable p = PageRequest.of(pageNumber,pageSize);
+    public PostApiResponse getAllPost(Integer pageNumber, Integer pageSize,String sortBy,String dir) {
+        Pageable p;
+
+        Sort sort = (dir.equalsIgnoreCase("DC")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        p = PageRequest.of(pageNumber,pageSize, sort);
+
         Page<Post> pages = this.postRepository.findAll(p);
         List<Post> posts = pages.getContent();
         List<PostDto> postDtos = posts.stream().map(post -> this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
-        return  postDtos;
+        PostApiResponse postApiResponse = new PostApiResponse();
+        postApiResponse.setData(postDtos);
+        postApiResponse.setPageNumber(pages.getNumber());
+        postApiResponse.setPageSize(pages.getSize());
+        postApiResponse.setTotalRecords(pages.getTotalElements());
+        postApiResponse.setTotalPages(pages.getTotalPages());
+        postApiResponse.setLastPage(pages.isLast());
+        return  postApiResponse;
     }
 
     @Override
-    public List<PostDto> getPostByCategoryId(Long categoryId) {
+    public PostApiResponse getPostByCategoryId(Long categoryId,Integer pageNumber, Integer pageSize, String sortBy, String dir) {
+        Pageable p;
+        Sort sort = (dir.equalsIgnoreCase("DC")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        p = PageRequest.of(pageNumber,pageSize, sort);
+
         Category category = this.categoryRepository.findById(categoryId).orElseThrow(()-> new ResourceNotFoundException("Category", "id", categoryId));
 
-        List<Post> posts = this.postRepository.findByCategory(category);
-        return posts.stream().map(post -> this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
+        Page<Post> pages = this.postRepository.findByCategory(p, category);
+
+        List<Post> posts = pages.getContent();
+
+
+        List<PostDto> postDtos =  posts.stream().map(post -> this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
+
+        PostApiResponse postApiResponse = new PostApiResponse();
+
+        postApiResponse.setData(postDtos);
+        postApiResponse.setPageNumber(pages.getNumber());
+        postApiResponse.setPageSize(pages.getSize());
+        postApiResponse.setTotalRecords(pages.getTotalElements());
+        postApiResponse.setTotalPages(pages.getTotalPages());
+        postApiResponse.setLastPage(pages.isLast());
+
+        return postApiResponse;
 
     }
 
@@ -98,9 +132,32 @@ public class PostServiceImplementation implements PostService {
     }
 
     @Override
-    public List<PostDto> getByUserId(Long userId) {
+    public PostApiResponse getByUserId(Long userId, Integer pageNumber, Integer pageSize, String sortBy, String dir) {
         User user = this.userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("User","id",userId));
-        List<Post> posts = this.postRepository.findByUser(user);
-        return posts.stream().map(post -> this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
+        Pageable p;
+        Sort sort = (dir.equalsIgnoreCase("DC")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        p = PageRequest.of(pageNumber,pageSize, sort);
+
+        Page<Post> pages = this.postRepository.findByUser(p, user);
+        List<Post> posts = pages.getContent();
+        List<PostDto> postDtos =  posts.stream().map(post -> this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
+
+
+        PostApiResponse postApiResponse = new PostApiResponse();
+
+        postApiResponse.setData(postDtos);
+        postApiResponse.setPageNumber(pages.getNumber());
+        postApiResponse.setPageSize(pages.getSize());
+        postApiResponse.setTotalRecords(pages.getTotalElements());
+        postApiResponse.setTotalPages(pages.getTotalPages());
+        postApiResponse.setLastPage(pages.isLast());
+
+        return postApiResponse;
+    }
+    @Override
+    public List<PostDto>  searchPost(String keyword){
+       List<Post> posts = this.postRepository.findByTitleContaining(keyword);
+        return posts.stream().map(post->this.modelMapper.map(post,PostDto.class)).collect(Collectors.toList());
     }
 }

@@ -1,7 +1,9 @@
 package com.blog.services;
 
 import com.blog.models.Post;
+import com.blog.payloads.PostApiResponse;
 import com.blog.payloads.PostDto;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -18,15 +20,17 @@ public interface PostService {
     public void deletePost(Long postId);
 
     //get all
-    public List<PostDto> getAllPost(Integer pageNumber, Integer pageSize);
+    public PostApiResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy,String dir);
 
     //get by category
-    public List<PostDto> getPostByCategoryId(Long categoryId);
+    public PostApiResponse getPostByCategoryId(Long categoryId,Integer pageNumber, Integer pageSize, String sortBy, String dir);
 
     //get by postid
     public PostDto getByPostId(Long postId);
 
     //get by user id
-    public List<PostDto> getByUserId(Long userId);
+    public PostApiResponse getByUserId(Long userId, Integer pageNumber, Integer pageSize, String sortBy, String dir);
+
+    public List<PostDto> searchPost(String keyword);
 
 }
