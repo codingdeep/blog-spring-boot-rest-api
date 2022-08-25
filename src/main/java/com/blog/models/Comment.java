@@ -18,7 +18,6 @@ public class Comment {
     private Long id;
     private String comment;
     private String status;
-
     @ManyToOne
     private Post post;
 }
