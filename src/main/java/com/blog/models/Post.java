@@ -1,5 +1,6 @@
 package com.blog.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "post")
@@ -37,5 +39,9 @@ public class Post {
 
     @ManyToOne
     private User user;
+
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy = "post")
+    @JsonIgnore
+    private List<Comment> comment;
 
 }

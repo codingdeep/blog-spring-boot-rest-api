@@ -51,6 +51,7 @@ public class PostServiceImplementation implements PostService {
 
         post.setUser(user);
         post.setCategory(category);
+        post.setPostImage("default.jpg");
         post.setCreatedAt(new Date());
 
         Post post1 = this.postRepository.save(post);
@@ -65,6 +66,7 @@ public class PostServiceImplementation implements PostService {
         post.setCategory(category);
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
+        post.setPostImage(postDto.getPostImage());
         post = this.postRepository.save(post);
         return this.modelMapper.map(post,PostDto.class);
     }

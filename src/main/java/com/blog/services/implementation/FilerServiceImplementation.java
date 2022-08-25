@@ -4,8 +4,7 @@ import com.blog.services.FileServices;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +28,13 @@ public class FilerServiceImplementation implements FileServices {
 
         Files.copy(file.getInputStream(), Paths.get(fullPath));
 
-        return fullPath;
+        return uniqueFileName;
+    }
+
+    @Override
+    public InputStream getResource(String path, String filename) throws FileNotFoundException {
+        String fullPath = path+File.separator+filename;
+        InputStream is = new FileInputStream(fullPath) ;
+        return is;
     }
 }

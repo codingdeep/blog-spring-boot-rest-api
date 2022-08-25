@@ -18,7 +18,7 @@ public class PostDto {
     private Long postId;
     private String title;
     private String description;
-    private String postImage="default.jpg";
+    private String postImage;
     private CategoryDto category;
     private UserDto user;
     private Date createdAt;

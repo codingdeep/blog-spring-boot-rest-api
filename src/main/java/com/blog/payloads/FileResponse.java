@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FileResponse {
+    private Long PostId;
     private String filename;
     private String message;
 
