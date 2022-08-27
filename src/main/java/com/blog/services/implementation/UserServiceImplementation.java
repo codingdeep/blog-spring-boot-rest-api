@@ -2,6 +2,7 @@ package com.blog.services.implementation;
 
 import com.blog.exceptions.ResourceExistException;
 import com.blog.exceptions.ResourceNotFoundException;
+
 import com.blog.models.User;
 import com.blog.payloads.UserDto;
 import com.blog.repositories.UserRepository;
@@ -32,6 +33,7 @@ public class UserServiceImplementation implements UserService {
             System.out.println("An user already exist with this email address!");
             throw new ResourceExistException("user","email", savedUser.getEmail());
         }else{
+
             savedUser = this.userRepository.save(user);
         }
         return this.modelMapper.map(savedUser,UserDto.class);
