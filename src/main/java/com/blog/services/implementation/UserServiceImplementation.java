@@ -3,17 +3,22 @@ package com.blog.services.implementation;
 import com.blog.exceptions.ResourceExistException;
 import com.blog.exceptions.ResourceNotFoundException;
 
+import com.blog.models.Role;
 import com.blog.models.User;
 import com.blog.payloads.UserDto;
+import com.blog.repositories.RoleRepository;
 import com.blog.repositories.UserRepository;
 import com.blog.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,8 +30,14 @@ public class UserServiceImplementation implements UserService {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private RoleRepository roleRepository;
+
     @Override
-    public UserDto createUser(UserDto userDto) throws Exception {
+    public UserDto createUser(UserDto userDto) {
         User user = this.dtoToUser(userDto);
         User savedUser = this.userRepository.findByEmail(user.getEmail());
         if(savedUser != null){
@@ -34,6 +45,18 @@ public class UserServiceImplementation implements UserService {
             throw new ResourceExistException("user","email", savedUser.getEmail());
         }else{
 
+            Role role =new Role();
+            role.setId(2);
+            role.setLabel("USER");
+
+            Set<Role> roles = new HashSet<>();
+            roles.add(role);
+
+            for (Role role1 : roles){
+                this.roleRepository.save(role1);
+            }
+
+            user.setPassword(this.passwordEncoder.encode(userDto.getPassword()));
             savedUser = this.userRepository.save(user);
         }
         return this.modelMapper.map(savedUser,UserDto.class);

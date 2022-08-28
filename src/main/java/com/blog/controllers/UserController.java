@@ -19,7 +19,7 @@ public class UserController {
     private UserService userService;
 
     //POST - create user
-    @PostMapping("")
+    @PostMapping("/create")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) throws Exception {
         UserDto createdUserDto =  this.userService.createUser(userDto);
         return new ResponseEntity<>(createdUserDto, HttpStatus.CREATED);
